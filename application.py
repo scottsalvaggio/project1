@@ -46,4 +46,17 @@ def register():
 
 @app.route("/login", methods=["POST"])
 def login():
+    """Log into website."""
+
+    # Get form information.
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    # Check for valid username/password.
+    if db.execute("SELECT * FROM users WHERE username = :username AND password = :password",
+                      {"username": username, "password": password}).rowcount == 0:
+        return render_template("error.html", message="Invalid login.")
+
+    # Login is valid, so take user to results page.
+    db.commit()
     return render_template("results.html", message="You are logged in and results are coming soon!")

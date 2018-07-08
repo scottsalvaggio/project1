@@ -17,7 +17,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Set up database
-engine = create_engine(os.getenv("postgres://pezufjjvmkmciq:c0798f396cc8f2813bbbd08c28c9833260c3274ba4ff15670c93bac5b3777c1c@ec2-23-23-93-115.compute-1.amazonaws.com:5432/d2ujn0f3h1cj9j"))
+engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
@@ -26,6 +26,22 @@ def index():
 
 @app.route("/register", methods=["POST"])
 def register():
+    """Register for an account."""
+
+    # Get form information.
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    # Check if username exists.
+    if not db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).rowcount == 0:
+        return render_template("error.html", message="Username already exists.")
+
+    # Add user credentials to users table.
+    db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
+            {"username": username, "password": password})
+
+    # Commit INSERT to users table.
+    db.commit()
     return render_template("success.html")
 
 @app.route("/login", methods=["POST"])

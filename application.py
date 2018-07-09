@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, session
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -59,4 +59,10 @@ def login():
 
     # Login is valid, so take user to results page.
     db.commit()
-    return render_template("results.html", message="You are logged in and results are coming soon!")
+    return redirect("/search")
+
+@app.route("/search")
+def search():
+    """Search for a location."""
+
+    return render_template("search.html")

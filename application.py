@@ -66,3 +66,9 @@ def search():
     """Search for a location."""
 
     return render_template("search.html")
+
+@app.route("/results", methods=["POST"])
+def results():
+    """Show location details."""
+
+    return render_template("results.html")

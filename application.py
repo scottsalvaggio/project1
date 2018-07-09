@@ -71,4 +71,15 @@ def search():
 def results():
     """Show location details."""
 
+    # Get form information.
+    zip_code = request.form.get("zip_code")
+    city = request.form.get("city")
+
+    # Check for valid username/password.
+    if db.execute("SELECT * FROM locations WHERE zip_code = :zip_code OR city = :city",
+                      {"zip_code": zip_code, "city": city}).rowcount == 0:
+        return render_template("error.html", message="No location found.")
+
+    # Login is valid, so take user to results page.
+    db.commit()
     return render_template("results.html")

@@ -53,12 +53,14 @@ def login():
     password = request.form.get("password")
 
     # Check for valid username/password.
-    if db.execute("SELECT * FROM users WHERE username = :username AND password = :password",
-                      {"username": username, "password": password}).rowcount == 0:
+    user = db.execute("SELECT * FROM users WHERE username = :username AND password = :password",
+                      {"username": username, "password": password}).fetchone()
+    if user is None:
         return render_template("error.html", message="Invalid login.")
 
     # Login is valid, so take user to results page.
     db.commit()
+    session["user_id"] = user.id
     return redirect("/search")
 
 @app.route("/search")

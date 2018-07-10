@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Results</h1>
+    <h1>Location Results</h1>
+
+    <ul>
+        {% for location in locations %}
+        <li>{{ location.city.title() }}, {{ location.state }} {{ location.zip_code }}</li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}

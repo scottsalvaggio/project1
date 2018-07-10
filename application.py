@@ -67,8 +67,8 @@ def search():
 
     return render_template("search.html")
 
-@app.route("/results", methods=["POST"])
-def results():
+@app.route("/locations", methods=["POST"])
+def locations():
     """Show location details."""
 
     # Get form information.
@@ -105,4 +105,4 @@ def results():
 
     # Take user to results page.
     db.commit()
-    return render_template("results.html", locations=locations)
+    return render_template("locations.html", locations=locations)

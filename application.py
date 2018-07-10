@@ -73,14 +73,36 @@ def results():
 
     # Get form information.
     zip_code = request.form.get("zip_code")
-    city = '%' + request.form.get("city") + '%'
+    city = request.form.get("city")
+    zip_length = len(zip_code)
+    city_length = len(city)
+
+    # If both values are empty, return error.
+    if zip_length == 0 and city_length == 0:
+        return render_template("error.html", message="No ZIP code or city entered.")
+
+    # Wrap form values in wildcards if not empty.
+    if not zip_length == 0:
+        zip_code = '%' + zip_code + '%'
+    if not city_length == 0:
+        city = '%' + city + '%'
+
+    # Keep track of whether both form values are not empty.
+    non_empty_zip_and_city = not zip_length == 0 and not city_length == 0
+
+    # Define SQL query pieces.
+    select = "SELECT * FROM locations"
+    where1 = " WHERE zip_code LIKE :zip_code"
+    where2 = " AND" if non_empty_zip_and_city else " OR"
+    where3 = " city ILIKE :city"
+    order_by = " ORDER BY city, state, zip_code"
 
     # Search locations table.
-    locations = db.execute("SELECT * FROM locations WHERE zip_code = :zip_code OR city ILIKE :city ORDER BY city, state, zip_code",
+    locations = db.execute(select + where1 + where2 + where3 + order_by,
                            {"zip_code": zip_code, "city": city}).fetchall()
     if len(locations) == 0:
         return render_template("error.html", message="No location found.")
 
-    # Login is valid, so take user to results page.
+    # Take user to results page.
     db.commit()
     return render_template("results.html", locations=locations)

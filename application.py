@@ -106,3 +106,17 @@ def locations():
     # Take user to results page.
     db.commit()
     return render_template("locations.html", locations=locations)
+
+@app.route("/locations/<int:location_id>")
+def location(location_id):
+    """List details about a location."""
+
+    # Make sure location exists.
+    location = db.execute("SELECT * FROM locations WHERE id = :id", {"id": location_id}).fetchone()
+    if location is None:
+        return render_template("error.html", message="No such location.")
+
+    # Get all passengers on that flight, send them to our flight.html template.
+    # passengers = db.execute("SELECT name FROM passengers WHERE flight_id = :flight_id",
+    #                        {"flight_id": flight_id}).fetchall()
+    return render_template("location.html", location=location)

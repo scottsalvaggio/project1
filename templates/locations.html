@@ -9,7 +9,9 @@
 
     <ul>
         {% for location in locations %}
-        <li>{{ location.city.title() }}, {{ location.state }} {{ location.zip_code }}</li>
+        <li>
+            <a href="{{ url_for('location', location_id=location.id) }}">{{ location.city.title() }}, {{ location.state }} {{ location.zip_code }}</a>
+        </li>
         {% endfor %}
     </ul>
 

@@ -44,6 +44,12 @@ SELECT check_ins.id, username, zip_code, city, state, comment
     FROM check_ins JOIN locations ON check_ins.location_id = locations.id
     JOIN users ON check_ins.user_id = users.id;
 
+SELECT users.username, check_ins.comment
+    FROM check_ins JOIN locations ON check_ins.location_id = locations.id
+    JOIN users ON check_ins.user_id = users.id WHERE locations.id = 7877;
+
+SELECT COUNT(*) FROM check_ins;
+
 SELECT * FROM locations WHERE state='MA' ORDER BY zip_code;
 
 -- Delete *all rows* in table

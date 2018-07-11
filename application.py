@@ -119,6 +119,8 @@ def location(location_id):
         return render_template("error.html", message="No such location.")
 
     # Get all passengers on that flight, send them to our flight.html template.
-    # passengers = db.execute("SELECT name FROM passengers WHERE flight_id = :flight_id",
-    #                        {"flight_id": flight_id}).fetchall()
-    return render_template("location.html", location=location)
+    check_ins = db.execute("SELECT users.username, check_ins.comment FROM check_ins \
+                            JOIN locations ON check_ins.location_id = locations.id \
+                            JOIN users ON check_ins.user_id = users.id WHERE locations.id = :location_id",
+                            {"location_id": location_id}).fetchall()
+    return render_template("location.html", location=location, check_ins=check_ins)

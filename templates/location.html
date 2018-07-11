@@ -26,4 +26,23 @@
         </tbody>
     </table>
 
+    {% if check_ins %}
+    <h1>Check-Ins</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <th scope="col">User</th>
+            <th scope="col">Comment</th>
+        </thead>
+        <tbody>
+            {% for check_in in check_ins %}
+            <tr>
+                <td>{{ check_in.username }}</td>
+                <td>{{ check_in.comment }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
 {% endblock %}

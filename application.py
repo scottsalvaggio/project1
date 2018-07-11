@@ -109,16 +109,30 @@ def locations():
     db.commit()
     return render_template("locations.html", locations=locations)
 
-@app.route("/locations/<int:location_id>")
+@app.route("/locations/<int:location_id>", methods=["GET", "POST"])
 def location(location_id):
     """List details about a location."""
+
+    # If user checked into this location, add this data to check_ins table
+    if request.method == "POST":
+        # Get form information.
+        comment = request.form.get("comment")
+
+        # Check if user_id exists.
+        if not session.get("user_id") and not db.execute("SELECT * FROM users WHERE id = :id", {"id": session["user_id"]}).rowcount == 0:
+            return render_template("error.html", message=str(session.get("user_id")) + " is an invalid user. You must be logged in to check into a location.")
+
+        # Add user credentials to users table.
+        db.execute("INSERT INTO check_ins (user_id, location_id, comment) VALUES (:user_id, :location_id, :comment)",
+                   {"user_id": session.get("user_id"), "location_id": location_id, "comment": comment})
+        db.commit()
 
     # Make sure location exists.
     location = db.execute("SELECT * FROM locations WHERE id = :id", {"id": location_id}).fetchone()
     if location is None:
         return render_template("error.html", message="No such location.")
 
-    # Get all passengers on that flight, send them to our flight.html template.
+    # Show location details and check-in results.
     check_ins = db.execute("SELECT users.username, check_ins.comment FROM check_ins \
                             JOIN locations ON check_ins.location_id = locations.id \
                             JOIN users ON check_ins.user_id = users.id WHERE locations.id = :location_id",

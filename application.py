@@ -120,9 +120,14 @@ def location(location_id):
 
         # Check if user_id exists.
         if not session.get("user_id") and not db.execute("SELECT * FROM users WHERE id = :id", {"id": session["user_id"]}).rowcount == 0:
-            return render_template("error.html", message=str(session.get("user_id")) + " is an invalid user. You must be logged in to check into a location.")
+            return render_template("error.html", message="Invalid user. You must be logged in to check into a location.")
 
-        # Add user credentials to users table.
+        # Check if user has already checked into this location.
+        if db.execute("SELECT * FROM check_ins WHERE user_id = :user_id AND location_id = :location_id",
+                      {"user_id": session.get("user_id"), "location_id": location_id}).rowcount > 0:
+            return render_template("error.html", message="You've already checked into this location.")
+
+        # Add data to check_ins table.
         db.execute("INSERT INTO check_ins (user_id, location_id, comment) VALUES (:user_id, :location_id, :comment)",
                    {"user_id": session.get("user_id"), "location_id": location_id, "comment": comment})
         db.commit()

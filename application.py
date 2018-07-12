@@ -123,9 +123,8 @@ def location(location_id):
             return render_template("error.html", message="Invalid user. You must be logged in to check into a location.")
 
         # Check if user has already checked into this location.
-        user_check_ins = db.execute("SELECT * FROM check_ins WHERE user_id = :user_id AND location_id = :location_id",
-                                     {"user_id": session.get("user_id"), "location_id": location_id}).fetchone()
-        if user_check_ins is None:
+        if db.execute("SELECT * FROM check_ins WHERE user_id = :user_id AND location_id = :location_id",
+                      {"user_id": session.get("user_id"), "location_id": location_id}).rowcount > 0:
             return render_template("error.html", message="You've already checked into this location.")
 
         # Add data to check_ins table.

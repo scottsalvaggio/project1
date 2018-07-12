@@ -1,6 +1,6 @@
 import datetime, json, os, requests
 
-from flask import Flask, Markup, redirect, render_template, request, session
+from flask import Flask, jsonify, Markup, redirect, render_template, request, session
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -181,3 +181,25 @@ def location(location_id):
                             {"location_id": location_id}).fetchall()
     return render_template("location.html", location=location, check_ins=check_ins, user_check_ins=user_check_ins,
                            weather_dict=weather_dict, weather_fields_formatted=weather_fields_formatted)
+
+@app.route("/api/<zip_code>")
+def location_api(zip_code):
+    """Return details about a location."""
+
+    # Make sure location exists.
+    location = db.execute("SELECT * FROM locations WHERE zip_code = :zip_code", {"zip_code": zip_code}).fetchone()
+    if location is None:
+        return jsonify({"error": "Invalid zip code"}), 404
+
+    # Get location details and check-in results are return them as JSON.
+    check_ins = db.execute("SELECT * FROM check_ins WHERE location_id = :location_id",
+                            {"location_id": location.id}).fetchall()
+    return jsonify({
+            "place_name": str(location.city.title()),
+            "state": str(location.state),
+            "zip": str(location.zip_code),
+            "latitude": float(location.latitude),
+            "longitude": float(location.longitude),
+            "population": int(location.population),
+            "check_ins": int(len(check_ins))
+        })

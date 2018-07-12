@@ -18,13 +18,14 @@ Files:
 Functionality:
 - Register for an account
 - Login/logout
-- Search: Search for a location by ZIP code or city/town name (partial matching supported across both fields, e.g. "2138" will find "02138")
-- Check-In Submission: When viewing a specific location, users can submit a “check-in” to log a visit (one check-in per user for a given location) along
-with a free-text comment about the location
+- Search: Search for a location by ZIP code or city/town name (partial matching supported, e.g. "2138" will find "02138")
+- Check-In Submission: When viewing a specific location, users who are logged in can submit a “check-in” to log a visit (one
+check-in per user for a given location) along with a free-text comment about the location
 - Location Data: The location page displays location details (location name, ZIP code, latitude, longitude, population, and the number of
 check-ins), current weather data (time of weather report, textual weather summary e.g. “Clear”, temperature, dew point, and
 humidity), and comments that users have left for that location
-- API Access: Users make a GET request to via the /api/<zip> route, where <zip> is a ZIP code. Example of a JSON response:
+- API Access: Users can make a GET request via the /api/<zip> route, where <zip> is a ZIP code. If the requested ZIP code isn’t in
+the database, a 404 error is returned. Example of a JSON response:
 ```json
 {
     "place_name": "Cambridge",
@@ -36,4 +37,3 @@ humidity), and comments that users have left for that location
     "check_ins": 1
 }
 ```
-If the requested ZIP code isn’t in the database, a 404 error is returned.

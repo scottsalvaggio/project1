@@ -26,6 +26,22 @@
         </tbody>
     </table>
 
+    <h1>Current Weather</h1>
+    <table class="table table-striped">
+        <thead>
+            {% for field in weather_fields_formatted %}
+            <th scope="col">{{ field }}</th>
+            {% endfor %}
+        </thead>
+        <tbody>
+            <tr>
+                {% for key, value in weather_dict.items() %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+
     {% if check_ins %}
     <h1>Check-Ins</h1>
 

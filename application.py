@@ -1,6 +1,6 @@
-import os
+import datetime, json, os, requests
 
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, Markup, redirect, render_template, request, session
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -148,9 +148,36 @@ def location(location_id):
     user_check_ins = db.execute("SELECT * FROM check_ins WHERE user_id = :user_id AND location_id = :location_id",
                                  {"user_id": session.get("user_id"), "location_id": location_id}).fetchone()
 
+    # Submit a GET request to the Dark Sky API
+    weather = requests.get(f"https://api.darksky.net/forecast/{os.getenv('API_KEY')}/{location.latitude},{location.longitude}")
+
+    # Check for successful GET request.
+    if weather.status_code != 200:
+        return render_template("error.html", message="Invalid Dark Sky API request.")
+
+    # Convert the response to JSON.
+    weather_json = weather.json()
+
+    # Create list with desired weather fields
+    weather_fields = ["time", "summary", "temperature", "dewPoint", "humidity"]
+
+    # Convert above list into user-friendly column headings
+    weather_fields_formatted = ["Time", "Description", Markup("Temperature (&deg;F)"), "Dew Point", "Humidity"]
+
+    # Create dict and fill with weather key:value pairs (the keys come from the weather_fields list)
+    weather_dict = {}
+    for field in weather_fields:
+        value = weather_json["currently"][field]
+        if field is "time":
+            value = datetime.datetime.utcfromtimestamp(int(value)).strftime("%H:%M") + " UTC"
+        elif field is "humidity":
+            value = str(int(float(value) * 100)) + "%"
+        weather_dict[field] = value
+
     # Show location details and check-in results.
     check_ins = db.execute("SELECT users.username, check_ins.comment FROM check_ins \
                             JOIN locations ON check_ins.location_id = locations.id \
                             JOIN users ON check_ins.user_id = users.id WHERE locations.id = :location_id",
                             {"location_id": location_id}).fetchall()
-    return render_template("location.html", location=location, check_ins=check_ins, user_check_ins=user_check_ins)
+    return render_template("location.html", location=location, check_ins=check_ins, user_check_ins=user_check_ins,
+                           weather_dict=weather_dict, weather_fields_formatted=weather_fields_formatted)

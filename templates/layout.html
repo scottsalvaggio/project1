@@ -6,6 +6,7 @@
     </head>
     <body>
         <div class="container">
+            <!-- navigation -->
             <nav>
                 <ul class="nav nav-tabs justify-content-end">
                     <li class="nav-item">
@@ -20,10 +21,14 @@
                     </li>
                 </ul>
             </nav>
+            <!-- end of navigation -->
+            <!-- main content -->
             <div class="container">
                 {% block body %}
                 {% endblock %}
             </div>
+            <!-- end of main content -->
         </div>
+        <!-- end of outer container div -->
     </body>
 </html>

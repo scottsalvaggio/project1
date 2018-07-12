@@ -45,7 +45,7 @@
     </table>
     {% endif %}
 
-    {% if user_check_ins is none %}
+    {% if session.user_id and user_check_ins is none %}
     <h1>Log a Visit</h1>
     <form action="{{ url_for('location', location_id=location.id) }}" method="post">
         <div class="form-group">

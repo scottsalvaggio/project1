@@ -63,6 +63,13 @@ def login():
     session["user_id"] = user.id
     return redirect("/search")
 
+@app.route("/logout")
+def logout():
+    """Log user out of website."""
+
+    session["user_id"] = None
+    return redirect("/")
+
 @app.route("/search")
 def search():
     """Search for a location."""
@@ -119,7 +126,7 @@ def location(location_id):
         comment = request.form.get("comment")
 
         # Check if user_id exists.
-        if not session.get("user_id") and not db.execute("SELECT * FROM users WHERE id = :id", {"id": session["user_id"]}).rowcount == 0:
+        if not session.get("user_id") and not db.execute("SELECT * FROM users WHERE id = :id", {"id": session.get("user_id")}).rowcount == 0:
             return render_template("error.html", message="Invalid user. You must be logged in to check into a location.")
 
         # Check if user has already checked into this location.

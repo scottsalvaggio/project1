@@ -20,9 +20,11 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -38,11 +40,12 @@ def register():
 
     # Add user credentials to users table.
     db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
-            {"username": username, "password": password})
+               {"username": username, "password": password})
 
     # Commit INSERT to users table.
     db.commit()
     return render_template("success.html")
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -58,10 +61,11 @@ def login():
     if user is None:
         return render_template("error.html", message="Invalid login.")
 
-    # Login is valid, so take user to results page.
+    # Login is valid, so take user to search page.
     db.commit()
     session["user_id"] = user.id
     return redirect("/search")
+
 
 @app.route("/logout")
 def logout():
@@ -70,11 +74,13 @@ def logout():
     session["user_id"] = None
     return redirect("/")
 
+
 @app.route("/search")
 def search():
     """Search for a location."""
 
     return render_template("search.html")
+
 
 @app.route("/locations", methods=["POST"])
 def locations():
@@ -116,11 +122,12 @@ def locations():
     db.commit()
     return render_template("locations.html", locations=locations)
 
+
 @app.route("/locations/<int:location_id>", methods=["GET", "POST"])
 def location(location_id):
     """List details about a location."""
 
-    # If user checked into this location, add this data to check_ins table
+    # If user checked into this location, add this data to check_ins table.
     if request.method == "POST":
         # Get form information.
         comment = request.form.get("comment")
@@ -139,14 +146,14 @@ def location(location_id):
                    {"user_id": session.get("user_id"), "location_id": location_id, "comment": comment})
         db.commit()
 
-    # Make sure location exists.
+    # Get location data and make sure location exists.
     location = db.execute("SELECT * FROM locations WHERE id = :id", {"id": location_id}).fetchone()
     if location is None:
         return render_template("error.html", message="No such location.")
 
     # Check if user has already checked into this location.
     user_check_ins = db.execute("SELECT * FROM check_ins WHERE user_id = :user_id AND location_id = :location_id",
-                                 {"user_id": session.get("user_id"), "location_id": location_id}).fetchone()
+                                {"user_id": session.get("user_id"), "location_id": location_id}).fetchone()
 
     # Submit a GET request to the Dark Sky API
     weather = requests.get(f"https://api.darksky.net/forecast/{os.getenv('API_KEY')}/{location.latitude},{location.longitude}")
@@ -158,13 +165,13 @@ def location(location_id):
     # Convert the response to JSON.
     weather_json = weather.json()
 
-    # Create list with desired weather fields
+    # Create list with desired weather fields.
     weather_fields = ["time", "summary", "temperature", "dewPoint", "humidity"]
 
-    # Convert above list into user-friendly column headings
+    # Convert above list into user-friendly column headings.
     weather_fields_formatted = ["Time", "Description", Markup("Temperature (&deg;F)"), "Dew Point", "Humidity"]
 
-    # Create dict and fill with weather key:value pairs (the keys come from the weather_fields list)
+    # Create dict and fill with weather key:value pairs (the keys come from the weather_fields list).
     weather_dict = {}
     for field in weather_fields:
         value = weather_json["currently"][field]
@@ -174,32 +181,37 @@ def location(location_id):
             value = str(int(float(value) * 100)) + "%"
         weather_dict[field] = value
 
-    # Show location details and check-in results.
+    # Get all check-ins for this location.
     check_ins = db.execute("SELECT users.username, check_ins.comment FROM check_ins \
                             JOIN locations ON check_ins.location_id = locations.id \
                             JOIN users ON check_ins.user_id = users.id WHERE locations.id = :location_id",
-                            {"location_id": location_id}).fetchall()
+                           {"location_id": location_id}).fetchall()
+
+    # Show location, weather, and check-in results.
     return render_template("location.html", location=location, check_ins=check_ins, user_check_ins=user_check_ins,
                            weather_dict=weather_dict, weather_fields_formatted=weather_fields_formatted)
+
 
 @app.route("/api/<zip_code>")
 def location_api(zip_code):
     """Return details about a location."""
 
-    # Make sure location exists.
+    # Get location data and make sure location exists.
     location = db.execute("SELECT * FROM locations WHERE zip_code = :zip_code", {"zip_code": zip_code}).fetchone()
     if location is None:
         return jsonify({"error": "Invalid zip code"}), 404
 
-    # Get location details and check-in results are return them as JSON.
+    # Get all check-ins for this location.
     check_ins = db.execute("SELECT * FROM check_ins WHERE location_id = :location_id",
-                            {"location_id": location.id}).fetchall()
+                           {"location_id": location.id}).fetchall()
+
+    # Return location and check-in data as JSON.
     return jsonify({
-            "place_name": str(location.city.title()),
-            "state": str(location.state),
-            "zip": str(location.zip_code),
-            "latitude": float(location.latitude),
-            "longitude": float(location.longitude),
-            "population": int(location.population),
-            "check_ins": int(len(check_ins))
-        })
+        "place_name": str(location.city.title()),
+        "state": str(location.state),
+        "zip": str(location.zip_code),
+        "latitude": float(location.latitude),
+        "longitude": float(location.longitude),
+        "population": int(location.population),
+        "check_ins": int(len(check_ins))
+    })

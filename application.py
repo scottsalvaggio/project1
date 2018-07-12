@@ -123,8 +123,9 @@ def location(location_id):
             return render_template("error.html", message="Invalid user. You must be logged in to check into a location.")
 
         # Check if user has already checked into this location.
-        if db.execute("SELECT * FROM check_ins WHERE user_id = :user_id AND location_id = :location_id",
-                      {"user_id": session.get("user_id"), "location_id": location_id}).rowcount > 0:
+        user_check_ins = db.execute("SELECT * FROM check_ins WHERE user_id = :user_id AND location_id = :location_id",
+                                     {"user_id": session.get("user_id"), "location_id": location_id}).fetchone()
+        if user_check_ins is None:
             return render_template("error.html", message="You've already checked into this location.")
 
         # Add data to check_ins table.
@@ -137,9 +138,13 @@ def location(location_id):
     if location is None:
         return render_template("error.html", message="No such location.")
 
+    # Check if user has already checked into this location.
+    user_check_ins = db.execute("SELECT * FROM check_ins WHERE user_id = :user_id AND location_id = :location_id",
+                                 {"user_id": session.get("user_id"), "location_id": location_id}).fetchone()
+
     # Show location details and check-in results.
     check_ins = db.execute("SELECT users.username, check_ins.comment FROM check_ins \
                             JOIN locations ON check_ins.location_id = locations.id \
                             JOIN users ON check_ins.user_id = users.id WHERE locations.id = :location_id",
                             {"location_id": location_id}).fetchall()
-    return render_template("location.html", location=location, check_ins=check_ins)
+    return render_template("location.html", location=location, check_ins=check_ins, user_check_ins=user_check_ins)

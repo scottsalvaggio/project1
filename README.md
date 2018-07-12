@@ -10,6 +10,7 @@ Files:
 - `templates` directory: contains all the HTML templates
 - `application.py`: the Flask app, which provides all the functionality listed below
 - `commands.sql`: the CREATE TABLE statements used to build the PostgreSQL database used by the web site (for reference)
+- `d2ujn0f3h1cj9j.sql`: a PostgreSQL dump of the database (from Adminer); data excluded
 - `import.py`: used to import the locations from `zips.csv` into the PostgreSQL database
 - `requirements.txt`: the necessary Python packages (Flask and SQLAlchemy, for instance) to be installed
 - `zips.csv`: the 7,375 locations imported via `import.py`

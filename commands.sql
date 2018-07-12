@@ -18,8 +18,8 @@ CREATE TABLE locations (
 
 CREATE TABLE check_ins (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users,
-    location_id INTEGER REFERENCES locations,
+    user_id INTEGER REFERENCES users NOT NULL,
+    location_id INTEGER REFERENCES locations NOT NULL,
     comment VARCHAR,
     UNIQUE (user_id, location_id)
 );

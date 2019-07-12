@@ -38,4 +38,5 @@ in the database, a 404 error is returned. Example of a JSON response:
 ```
 
 ## Origin
-- Initially created as a project for CSCI S-33a Web Programming with Python and JavaScript (Harvard Summer School)
+- Initially created as a project for CSCI S-33a Web Programming with Python and JavaScript (Harvard Summer School).
+- Has since been updated and improved.

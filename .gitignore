@@ -1,0 +1,4 @@
+__pycache__/
+*_session/
+flask_notes.txt
+flask_setup.sh

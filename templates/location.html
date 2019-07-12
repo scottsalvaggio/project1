@@ -34,8 +34,8 @@
         </thead>
         <tbody>
             <tr>
-                {% for key, value in weather_dict.items() %}
-                <td>{{ value }}</td>
+                {% for field in weather_fields %}
+                <td>{{ weather_dict[field] }}</td>
                 {% endfor %}
             </tr>
         </tbody>

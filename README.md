@@ -1,12 +1,10 @@
-# Project 1
+# Weather Checker
 
-Web Programming with Python and JavaScript
-
-This web site allows users to query weather information via the Dark Sky API (https://darksky.net/dev). You can search for a
+This Flask web app allows users to query weather information via the Dark Sky API (https://darksky.net/dev). You can search for a
 location by its ZIP code or city/town name. All ZIP codes in the United States that have a population of 15,000 or more are included
 here.
 
-Files:
+## Files
 - `templates` directory: contains all the HTML templates
 - `application.py`: the Flask app, which provides all the functionality listed below
 - `commands.sql`: the CREATE TABLE statements used to build the PostgreSQL database used by the web site (for reference)
@@ -16,7 +14,7 @@ Files:
 - `zips.csv`: the 7,375 locations imported via `import.py`
 - `zips_test.csv`: a smaller CSV file consisting of 4 locations used for import testing
 
-Functionality:
+## Functionality
 - Register for an account
 - Login/logout
 - Search: Search for a location by ZIP code or city/town name (partial matching supported, e.g. "2138" will find "02138")
@@ -38,3 +36,6 @@ in the database, a 404 error is returned. Example of a JSON response:
     "check_ins": 1
 }
 ```
+
+## Origin
+- Initially created as a project for CSCI S-33a Web Programming with Python and JavaScript (Harvard Summer School)

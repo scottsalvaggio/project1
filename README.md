@@ -1,6 +1,6 @@
 # Weather Checker
 
-This Flask web app allows users to query weather information via the Dark Sky API (https://darksky.net/dev). You can search for a
+This Flask web app allows users to query current weather information via the Dark Sky API (https://darksky.net/dev). You can search for a
 location by its ZIP code or city/town name. All ZIP codes in the United States that have a population of 15,000 or more are included
 here.
 

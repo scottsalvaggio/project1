@@ -157,8 +157,7 @@ def location(location_id):
                                 {"user_id": session.get("user_id"), "location_id": location_id}).fetchone()
 
     # Submit a GET request to the Dark Sky API
-    url = "https://api.darksky.net/forecast/" + os.getenv('API_KEY') + "/" + str(location.latitude) + "," + str(location.longitude)
-    weather = requests.get(url)
+    weather = requests.get("https://api.darksky.net/forecast/{api_key}/{latitude},{longitude}".format(api_key=os.getenv('API_KEY'), latitude=location.latitude, longitude=location.longitude))
 
     # Check for successful GET request.
     if weather.status_code != 200:

@@ -182,7 +182,7 @@ def location(location_id):
         if field is "time":
             value = datetime.datetime.fromtimestamp(int(value), gettz(timezone)).strftime("%-I:%M %p")
         elif field is "temperature":
-            value = str(value) + " " + Markup("&deg;F")
+            value = str(value) + Markup("&deg;F")
         elif field is "humidity":
             value = str(int(float(value) * 100)) + "%"
         weather_dict[field] = value

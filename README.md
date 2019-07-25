@@ -14,7 +14,7 @@ check-in per user for a given location) along with a free-text comment about the
 check-ins), current weather data (time of weather report, textual weather summary e.g. “Clear”, temperature, dew point, and
 humidity), and comments that users have left for that location
 - API Access: Users can make a GET request via the `/api/<zip>` route, where `<zip>` is a ZIP code. If the requested ZIP code isn’t
-in the database, a 404 error is returned. Example of a JSON response:
+in the database, a 404 error is returned. Example of a [JSON response](https://weather-checker-123.herokuapp.com/api/02138):
 ```json
 {
     "check_ins": 1,

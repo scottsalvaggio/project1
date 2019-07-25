@@ -17,13 +17,13 @@ humidity), and comments that users have left for that location
 in the database, a 404 error is returned. Example of a JSON response:
 ```json
 {
-    "place_name": "Cambridge",
-    "state": "MA",
+    "check_ins": 1,
     "latitude": 42.37,
     "longitude": -71.11,
-    "zip": "02138",
+    "place_name": "Cambridge",
     "population": 36314,
-    "check_ins": 1
+    "state": "MA",
+    "zip": "02138"
 }
 ```
 

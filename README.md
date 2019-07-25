@@ -1,4 +1,4 @@
-# Weather Checker
+# [Weather Checker](https://weather-checker-123.herokuapp.com/)
 
 This Flask web app allows users to search by city or ZIP code to get current weather data and location details. Current weather data is provided 
 by making calls to the Dark Sky API (https://darksky.net/dev). Location details are stored in a PostgreSQL database, which contains all ZIP codes 
